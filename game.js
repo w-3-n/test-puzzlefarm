@@ -201,11 +201,15 @@ function createSeedCard(seed) {
     if (selectedSeedId === seed.id) {
       selectedSeedId = null;
       card.classList.remove('selected');
+      missingSlot.classList.remove('ready-for-drop');
     } else {
       // Deselect previous
       document.querySelectorAll('.seed-card.selected').forEach(c => c.classList.remove('selected'));
       selectedSeedId = seed.id;
       card.classList.add('selected');
+      
+      // Wix-friendly: Make the target slot pulse so user knows to click it
+      missingSlot.classList.add('ready-for-drop');
     }
   });
 
@@ -226,7 +230,14 @@ function createSeedCard(seed) {
 
 // ─── Handle an answer attempt ─────────────────────────────────────────────────
 function handleAnswer(seedId) {
-  if (!seedId || sceneResolved) return;
+  if (sceneResolved) return;
+  
+  if (!seedId) {
+    // If user clicks the slot without a seed selected
+    missingSlot.classList.add('wrong');
+    setTimeout(() => missingSlot.classList.remove('wrong'), 500);
+    return;
+  }
 
   const scene = SCENES[currentSceneIndex];
   const seed  = scene.seeds.find(s => s.id === seedId);
@@ -239,6 +250,9 @@ function handleAnswer(seedId) {
     sceneResolved = true;
     score += 100;
     scoreDisplay.textContent = score;
+
+    // Remove pulse
+    missingSlot.classList.remove('ready-for-drop');
 
     // Fill the slot with the correct crop image
     slotInner.innerHTML = '';
@@ -278,6 +292,7 @@ function handleAnswer(seedId) {
     }
 
     missingSlot.classList.add('wrong');
+    missingSlot.classList.remove('ready-for-drop');
     setTimeout(() => missingSlot.classList.remove('wrong'), 500);
 
     // Deselect
@@ -345,6 +360,13 @@ function scaleGame() {
 
 window.addEventListener('resize', scaleGame);
 scaleGame();
+
+// ─── Wix/Mobile Specific: Prevent scrolling while interacting with game ───
+document.addEventListener('touchmove', function(e) {
+  if (e.target.closest('#game')) {
+    e.preventDefault();
+  }
+}, { passive: false });
 
 // ─── Start ────────────────────────────────────────────────────────────────────
 loadScene(0);

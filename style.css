@@ -161,8 +161,23 @@ body {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: border-color 0.3s, box-shadow 0.3s;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   background: rgba(200,150,58,0.08);
+}
+
+/* Wix-friendly: Pulse when a seed is selected */
+#missing-slot.ready-for-drop {
+  border-color: #ffd700;
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+  animation: slotPulseGold 1.2s infinite;
+  transform: scale(1.08);
+  background: rgba(255, 215, 0, 0.15);
+}
+
+@keyframes slotPulseGold {
+  0%   { box-shadow: 0 0 10px rgba(255, 215, 0, 0.4); border-color: #ffd700; }
+  50%  { box-shadow: 0 0 40px rgba(255, 215, 0, 0.8); border-color: #fff; }
+  100% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.4); border-color: #ffd700; }
 }
 
 #missing-slot.slot-glow {
